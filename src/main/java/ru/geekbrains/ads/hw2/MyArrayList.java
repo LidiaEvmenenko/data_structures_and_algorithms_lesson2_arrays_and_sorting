@@ -4,32 +4,55 @@ public class MyArrayList<T extends Comparable<T>> {
     private T[] list;
     private int size;
     private final int DEFAULT_CAPACITY = 10;
+    private int currentCapacity;
 
     public MyArrayList(int capacity) {
         if (capacity <= 0) {
             throw new IllegalArgumentException("capacity <= 0");
         }
         list = (T[]) new Comparable[capacity];
+        currentCapacity = capacity;
     }
 
     public MyArrayList() {
         list = (T[]) new Comparable[DEFAULT_CAPACITY];
+        currentCapacity = DEFAULT_CAPACITY;
     }
 
     public void add(T item) {
-        //check size
+        checkSize();
         list[size] = item;
         size++;
     }
 
     public void add(int index, T item) {
-        //check size
-        //check index
+        checkSize();
+        checkIndex(index);
         for (int i = size; i > index; i--) {
             list[i] = list[i - 1];
         }
         list[index] = item;
         size++;
+    }
+
+    private void checkSize(){
+        if(size == currentCapacity){
+            currentCapacity = (int)(currentCapacity * 1.5)+1;
+            T[] newList = (T[]) new Comparable[currentCapacity];
+            for (int i = 0; i < size; i++) {
+                newList[i] = list[i];
+            }
+            list = newList;
+        }
+    }
+
+    private void checkIndex(int index){
+        if (index <= 0) {
+            throw new IllegalArgumentException("index <= 0");
+        }
+        if (index > size) {
+            throw new IllegalArgumentException("index out of bounds");
+        }
     }
 
     private int index(T item) {
@@ -46,7 +69,7 @@ public class MyArrayList<T extends Comparable<T>> {
     }
 
     public void remove(int index) {
-        //check index
+        checkIndex(index);
         for (int i = index; i < size; i++) {
             list[i] = list[i + 1];
         }
